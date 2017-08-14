@@ -1,0 +1,3 @@
+package jp.shoma.screenfilter
+
+class StartScreenFilterEvent
