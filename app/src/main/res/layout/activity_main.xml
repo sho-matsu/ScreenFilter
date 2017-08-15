@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
-        android:text="透過度"/>
+        android:text="透過率"/>
 
     <LinearLayout
         android:layout_width="match_parent"
