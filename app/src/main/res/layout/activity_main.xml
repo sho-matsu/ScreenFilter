@@ -7,21 +7,41 @@
     android:orientation="vertical"
     android:layout_gravity="center_vertical"
     android:gravity="center_vertical"
-    tools:context="jp.shoma.screenfilter.MainActivity">
+    tools:context="jp.shoma.screenfilter.activity.MainActivity">
 
     <CheckBox
         android:id="@+id/check"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"/>
 
-    <Button
-        android:id="@+id/transparency"
-        android:layout_width="match_parent"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:text="透明度"/>
+        android:text="透過度"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <SeekBar
+            android:id="@+id/seek_bar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:max="100"/>
+
+        <TextView
+            android:id="@+id/value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="center_vertical"/>
+
+    </LinearLayout>
+
 </LinearLayout>

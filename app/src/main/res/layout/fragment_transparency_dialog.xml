@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
-        android:text="透明度設定"
+        android:text="透過度設定"
         android:textSize="14sp"
         android:textStyle="bold"/>
 
@@ -24,14 +24,14 @@
             android:id="@+id/seek_bar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="9"
+            android:layout_weight="8"
             android:max="100"/>
 
         <TextView
             android:id="@+id/value"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_weight="2"/>
 
     </LinearLayout>
 </LinearLayout>

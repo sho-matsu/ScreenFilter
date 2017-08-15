@@ -1,4 +1,4 @@
-package jp.shoma.screenfilter
+package jp.shoma.screenfilter.util
 
 import android.content.Context
 import android.preference.PreferenceManager
