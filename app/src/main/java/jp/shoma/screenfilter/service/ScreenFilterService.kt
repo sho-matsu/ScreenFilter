@@ -19,6 +19,7 @@ import android.view.View
 import jp.shoma.screenfilter.R
 import jp.shoma.screenfilter.activity.MainActivity
 import jp.shoma.screenfilter.constant.PrefConst
+import jp.shoma.screenfilter.model.ColorList
 import jp.shoma.screenfilter.util.PrefUtil
 
 
@@ -100,9 +101,9 @@ class ScreenFilterService : Service() {
     fun setBackgroundColor() {
         Log.d(TAG, "setBackgroundColor")
 
-//        val color = PrefUtil.getSpValStr(this, PrefConst.KEY_COLOR)
-//        view.setBackgroundColor(Color.parseColor(color))
-        mView.setBackgroundColor(Color.BLACK)
+        val position = PrefUtil.getSpValInt(this, PrefConst.KEY_SELECTED_COLOR)
+        val color = ColorList.get()[position].colorCode
+        mView.setBackgroundColor(Color.parseColor(color))
 
         val transparency = PrefUtil.getSpValInt(this, PrefConst.KEY_TRANSPARENCY)
         mView.background.alpha = (255 * transparency / 100 * 0.9).toInt()

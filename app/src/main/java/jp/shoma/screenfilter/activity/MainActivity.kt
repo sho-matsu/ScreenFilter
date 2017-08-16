@@ -11,10 +11,10 @@ import android.os.IBinder
 import android.provider.Settings
 import android.support.annotation.RequiresApi
 import android.support.v7.app.AppCompatActivity
-import android.widget.CheckBox
-import android.widget.SeekBar
-import android.widget.TextView
+import android.view.View
+import android.widget.*
 import jp.shoma.screenfilter.R
+import jp.shoma.screenfilter.adapter.ColorListAdapter
 import jp.shoma.screenfilter.constant.PrefConst
 import jp.shoma.screenfilter.event.StartScreenFilterEvent
 import jp.shoma.screenfilter.event.StopScreenFilterEvent
@@ -83,6 +83,21 @@ class MainActivity : AppCompatActivity() {
                     mService?.setBackgroundColor()
                 }
             })
+        }
+
+        val colorSelector = findViewById(R.id.color_spinner) as Spinner
+        colorSelector.apply {
+            adapter = ColorListAdapter(mContext)
+            onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                    PrefUtil.putSpValInt(mContext, PrefConst.KEY_SELECTED_COLOR, position)
+                    mService?.setBackgroundColor()
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                }
+            }
+            setSelection(PrefUtil.getSpValInt(mContext, PrefConst.KEY_SELECTED_COLOR))
         }
     }
 
