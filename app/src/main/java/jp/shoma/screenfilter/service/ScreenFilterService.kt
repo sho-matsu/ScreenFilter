@@ -6,27 +6,29 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.os.IBinder
-import android.view.WindowManager
-import android.widget.FrameLayout
 import android.graphics.PixelFormat
 import android.os.Binder
 import android.os.Build
+import android.os.IBinder
 import android.support.annotation.RequiresApi
 import android.support.v4.app.NotificationCompat
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
+import android.widget.FrameLayout
+import android.widget.RemoteViews
 import jp.shoma.screenfilter.R
 import jp.shoma.screenfilter.activity.MainActivity
 import jp.shoma.screenfilter.constant.PrefConst
 import jp.shoma.screenfilter.model.ColorList
 import jp.shoma.screenfilter.util.PrefUtil
+import java.util.concurrent.atomic.AtomicBoolean
 
 
 class ScreenFilterService : Service() {
     private lateinit var mView: View
 
-    private val mBinder = ScreenFilterBinder();
+    private val mBinder = ScreenFilterBinder()
 
     inner class ScreenFilterBinder : Binder() {
         fun getService() : ScreenFilterService {
@@ -36,7 +38,7 @@ class ScreenFilterService : Service() {
 
     override fun onBind(p0: Intent?): IBinder? {
         Log.d(TAG, "onBind")
-        mIsBind = true
+        mIsBound.set(true)
         setView()
         return mBinder
     }
@@ -44,18 +46,24 @@ class ScreenFilterService : Service() {
     override fun onRebind(intent: Intent?) {
         super.onRebind(intent)
         Log.d(TAG, "onRebind")
-        mIsBind = true
+        mIsBound.set(true)
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
         Log.d(TAG, "onUnbind")
-        mIsBind = false
+        mIsBound.set(false)
         return true
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d(TAG, "onStartCommand")
+
+        mIsStarted.set(true)
+
+
+        val remoteView = RemoteViews(packageName, R.layout.notification_layout)
+        remoteView
 
         val contentIntent = PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java), 0)
         val notification = NotificationCompat.Builder(this)
@@ -72,6 +80,7 @@ class ScreenFilterService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        mIsStarted.set(false)
         Log.d(TAG, "onDestroy")
         val wm = getSystemService(Context.WINDOW_SERVICE) as WindowManager
         wm.removeView(mView)
@@ -112,8 +121,10 @@ class ScreenFilterService : Service() {
     companion object {
         val TAG = ScreenFilterService::class.java.name
         val STATUS_BAR_ICON_ID = 0x01
-        private var mIsBind: Boolean = false
+        private var mIsBound = AtomicBoolean(false)
+        private var mIsStarted = AtomicBoolean(false)
 
-        fun isBind() = mIsBind
+        fun isBound() = mIsBound.get()
+        fun isStarted() = mIsStarted.get()
     }
 }

@@ -106,10 +106,17 @@ class MainActivity : AppCompatActivity() {
         EventBus.getDefault().register(this)
 
         val isChecked = PrefUtil.getSpValBoolean(this, PrefConst.KEY_IS_FILTER_STARTED)
-        // フィルター起動中だが、ServiceがBindされていなければBindする
-        if (isChecked && !ScreenFilterService.isBind()) {
-            val intent = Intent(mContext, ScreenFilterService::class.java)
-            bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
+        if (isChecked) {
+            // ServiceがBindされていなければBindする
+            if (!ScreenFilterService.isBound()) {
+                val intent = Intent(mContext, ScreenFilterService::class.java)
+                bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
+            }
+            // Serviceが起動されていなければ起動する
+            if (!ScreenFilterService.isStarted()) {
+                val intent = Intent(mContext, ScreenFilterService::class.java)
+                startService(intent)
+            }
         }
     }
 
@@ -118,7 +125,7 @@ class MainActivity : AppCompatActivity() {
         EventBus.getDefault().unregister(this)
 
         // ServiceがBindされていればUnbindする
-        if (ScreenFilterService.isBind()) {
+        if (ScreenFilterService.isBound()) {
             unbindService(mServiceConnection)
         }
     }
@@ -158,7 +165,7 @@ class MainActivity : AppCompatActivity() {
     @Subscribe
     fun stopScreenFilter(stopScreenFilterEvent: StopScreenFilterEvent?) {
         stopService(Intent(mContext, ScreenFilterService::class.java))
-        if (ScreenFilterService.isBind()) {
+        if (ScreenFilterService.isBound()) {
             unbindService(mServiceConnection)
         }
     }
