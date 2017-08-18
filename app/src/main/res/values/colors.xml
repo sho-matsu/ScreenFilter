@@ -10,4 +10,5 @@
     <color name="blue">#00f</color>
     <color name="green">#008000</color>
     <color name="magenta">#FF00FF</color>
+    <color name="white">#fff</color>
 </resources>
