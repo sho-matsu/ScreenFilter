@@ -61,10 +61,6 @@ class ScreenFilterService : Service() {
 
         mIsStarted.set(true)
 
-
-        val remoteView = RemoteViews(packageName, R.layout.notification_layout)
-        remoteView
-
         val contentIntent = PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java), 0)
         val notification = NotificationCompat.Builder(this)
                 .setAutoCancel(false)

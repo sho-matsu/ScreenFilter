@@ -48,7 +48,8 @@ class MainActivity : AppCompatActivity() {
         val check = findViewById(R.id.check) as CheckBox
         check.apply {
             isChecked = PrefUtil.getSpValBoolean(mContext, PrefConst.KEY_IS_FILTER_STARTED)
-            text = if (isChecked) "STOP" else "START"
+            val mode = if (isChecked) getString(R.string.stop) else getString(R.string.active)
+            text =  getString(R.string.screen_filter_switch, mode)
 
             setOnCheckedChangeListener { compoundButton, _ ->
                 val isChecked = compoundButton.isChecked
