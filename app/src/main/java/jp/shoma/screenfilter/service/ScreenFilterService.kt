@@ -34,6 +34,21 @@ class ScreenFilterService : Service() {
         }
     }
 
+    override fun onCreate() {
+        super.onCreate()
+        Log.d(TAG, "onCreate")
+
+        val contentIntent = PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java), 0)
+        val notification = NotificationCompat.Builder(this, getString(R.string.notification_channel_id))
+            .setAutoCancel(false)
+            .setContentTitle("Screen Filter")
+            .setContentText("タップすると設定画面を起動できます")
+            .setContentIntent(contentIntent)
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .build()
+        startForeground(STATUS_BAR_ICON_ID, notification)
+    }
+
     override fun onBind(p0: Intent?): IBinder? {
         Log.d(TAG, "onBind")
         mIsBound.set(true)
@@ -57,24 +72,11 @@ class ScreenFilterService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d(TAG, "onStartCommand")
 
-        mIsStarted.set(true)
-
-        val contentIntent = PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java), 0)
-        val notification = NotificationCompat.Builder(this, getString(R.string.notification_channel_id))
-                .setAutoCancel(false)
-                .setContentTitle("Screen Filter")
-                .setContentText("タップすると設定画面を起動できます")
-                .setContentIntent(contentIntent)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .build()
-        startForeground(STATUS_BAR_ICON_ID, notification)
-
         return START_STICKY
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mIsStarted.set(false)
         Log.d(TAG, "onDestroy")
         val wm = getSystemService(Context.WINDOW_SERVICE) as WindowManager
         wm.removeView(mView)
@@ -117,11 +119,9 @@ class ScreenFilterService : Service() {
 
     companion object {
         val TAG = ScreenFilterService::class.java.name
-        const val STATUS_BAR_ICON_ID = 0x01
+        const val STATUS_BAR_ICON_ID = 0x100
         private var mIsBound = AtomicBoolean(false)
-        private var mIsStarted = AtomicBoolean(false)
 
         fun isBound() = mIsBound.get()
-        fun isStarted() = mIsStarted.get()
     }
 }

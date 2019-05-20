@@ -1,5 +1,7 @@
 package jp.shoma.screenfilter.activity
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -42,6 +44,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         mContext = this
+
+        // Notification Channelの作成
+        initNotificationChannel()
 
         // UIオーバーレイのパーミッションチェック
         checkOverlayPermission()
@@ -110,15 +115,12 @@ class MainActivity : AppCompatActivity() {
 
         val isChecked = PrefUtil.getSpValBoolean(this, PrefConst.KEY_IS_FILTER_STARTED)
         if (isChecked) {
+            // Serviceを起動する
+            startService(Intent(mContext, ScreenFilterService::class.java))
             // ServiceがBindされていなければBindする
             if (!ScreenFilterService.isBound()) {
                 val intent = Intent(mContext, ScreenFilterService::class.java)
                 bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
-            }
-            // Serviceが起動されていなければ起動する
-            if (!ScreenFilterService.isStarted()) {
-                val intent = Intent(mContext, ScreenFilterService::class.java)
-                startService(intent)
             }
         }
     }
@@ -132,6 +134,17 @@ class MainActivity : AppCompatActivity() {
             unbindService(mServiceConnection)
         }
     }
+
+  private fun initNotificationChannel() {
+      if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
+      val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+      manager.createNotificationChannel(
+          NotificationChannel(
+              getString(R.string.notification_channel_id), "Screen Filter",
+              NotificationManager.IMPORTANCE_LOW
+          )
+      )
+  }
 
     /**
      * UIオーバーレイのパーミッションを取得する
