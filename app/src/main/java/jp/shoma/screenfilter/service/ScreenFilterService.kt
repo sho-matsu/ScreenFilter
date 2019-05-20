@@ -16,14 +16,12 @@ import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.FrameLayout
-import android.widget.RemoteViews
 import jp.shoma.screenfilter.R
 import jp.shoma.screenfilter.activity.MainActivity
 import jp.shoma.screenfilter.constant.PrefConst
 import jp.shoma.screenfilter.model.ColorList
 import jp.shoma.screenfilter.util.PrefUtil
 import java.util.concurrent.atomic.AtomicBoolean
-
 
 class ScreenFilterService : Service() {
     private lateinit var mView: View
@@ -62,7 +60,7 @@ class ScreenFilterService : Service() {
         mIsStarted.set(true)
 
         val contentIntent = PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java), 0)
-        val notification = NotificationCompat.Builder(this)
+        val notification = NotificationCompat.Builder(this, getString(R.string.notification_channel_id))
                 .setAutoCancel(false)
                 .setContentTitle("Screen Filter")
                 .setContentText("タップすると設定画面を起動できます")
@@ -84,19 +82,22 @@ class ScreenFilterService : Service() {
         nm.cancel(STATUS_BAR_ICON_ID)
     }
 
-    fun setView() {
+    private fun setView() {
         Log.d(TAG, "setView")
 
+        val type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+        } else {
+            WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY
+        }
         mView = FrameLayout(this)
         val params = WindowManager.LayoutParams(
-                WindowManager.LayoutParams.MATCH_PARENT,
-                WindowManager.LayoutParams.MATCH_PARENT,
-                WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                        WindowManager.LayoutParams.FLAG_FULLSCREEN or
-                        WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS or
-                        WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
-                PixelFormat.TRANSLUCENT)
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.MATCH_PARENT,
+            type,
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+            PixelFormat.TRANSLUCENT
+        )
         val wm = getSystemService(Context.WINDOW_SERVICE) as WindowManager
         wm.addView(mView, params)
 
@@ -116,7 +117,7 @@ class ScreenFilterService : Service() {
 
     companion object {
         val TAG = ScreenFilterService::class.java.name
-        val STATUS_BAR_ICON_ID = 0x01
+        const val STATUS_BAR_ICON_ID = 0x01
         private var mIsBound = AtomicBoolean(false)
         private var mIsStarted = AtomicBoolean(false)
 
