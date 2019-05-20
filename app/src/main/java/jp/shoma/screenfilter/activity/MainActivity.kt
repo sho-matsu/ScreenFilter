@@ -24,7 +24,9 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 
 class MainActivity : AppCompatActivity() {
-    private val OVERLAY_PERMISSION_REQ_CODE = 1000
+    companion object {
+        private const val OVERLAY_PERMISSION_REQ_CODE = 1000
+    }
     private lateinit var mContext : Context
     private var mService : ScreenFilterService? = null
     private val mServiceConnection = object : ServiceConnection {
@@ -45,7 +47,7 @@ class MainActivity : AppCompatActivity() {
         checkOverlayPermission()
 
         // START/STOPチェックボックスの設定
-        val check = findViewById(R.id.check) as CheckBox
+        val check = findViewById<CheckBox>(R.id.check)
         check.apply {
             isChecked = PrefUtil.getSpValBoolean(mContext, PrefConst.KEY_IS_FILTER_STARTED)
             val mode = if (isChecked) getString(R.string.stop) else getString(R.string.active)
@@ -63,10 +65,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         // 透過率シークバーの設定
-        val value = findViewById(R.id.value) as TextView
+        val value = findViewById<TextView>(R.id.value)
         val transparency = PrefUtil.getSpValInt(mContext, PrefConst.KEY_TRANSPARENCY)
         value.text = getString(R.string.transparency_percent, transparency.toString())
-        val seekBar = findViewById(R.id.seek_bar) as SeekBar
+        val seekBar = findViewById<SeekBar>(R.id.seek_bar)
         seekBar.apply {
             progress = transparency
             setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -86,7 +88,7 @@ class MainActivity : AppCompatActivity() {
             })
         }
 
-        val colorSelector = findViewById(R.id.color_spinner) as Spinner
+        val colorSelector = findViewById<Spinner>(R.id.color_spinner)
         colorSelector.apply {
             adapter = ColorListAdapter(mContext)
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -138,7 +140,7 @@ class MainActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!Settings.canDrawOverlays(mContext)) {
                 val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                        Uri.parse("package:" + packageName))
+                        Uri.parse("package:$packageName"))
                 startActivityForResult(intent, OVERLAY_PERMISSION_REQ_CODE)
             }
         }
