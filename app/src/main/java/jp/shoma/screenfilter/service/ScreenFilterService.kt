@@ -44,7 +44,7 @@ class ScreenFilterService : Service() {
             .setContentTitle("Screen Filter")
             .setContentText("タップすると設定画面を起動できます")
             .setContentIntent(contentIntent)
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSmallIcon(R.drawable.ic_filter)
             .build()
         startForeground(STATUS_BAR_ICON_ID, notification)
     }
