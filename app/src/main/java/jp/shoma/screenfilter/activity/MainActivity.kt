@@ -1,7 +1,5 @@
 package jp.shoma.screenfilter.activity
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -14,7 +12,11 @@ import android.provider.Settings
 import android.support.annotation.RequiresApi
 import android.support.v7.app.AppCompatActivity
 import android.view.View
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.CheckBox
+import android.widget.SeekBar
+import android.widget.Spinner
+import android.widget.TextView
 import jp.shoma.screenfilter.R
 import jp.shoma.screenfilter.adapter.ColorListAdapter
 import jp.shoma.screenfilter.constant.PrefConst
@@ -46,9 +48,6 @@ class MainActivity : AppCompatActivity() {
     setContentView(R.layout.activity_main)
     mContext = this
 
-    // Notification Channelの作成
-    initNotificationChannel()
-
     // UIオーバーレイのパーミッションチェック
     checkOverlayPermission()
 
@@ -67,6 +66,8 @@ class MainActivity : AppCompatActivity() {
         } else {
           stopScreenFilter(null)
         }
+        val changedMode = if (isChecked) getString(R.string.stop) else getString(R.string.active)
+        text = getString(R.string.screen_filter_switch, changedMode)
       }
     }
 
@@ -134,17 +135,6 @@ class MainActivity : AppCompatActivity() {
     if (ScreenFilterService.isBound()) {
       unbindService(mServiceConnection)
     }
-  }
-
-  private fun initNotificationChannel() {
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
-    val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-    manager.createNotificationChannel(
-      NotificationChannel(
-        getString(R.string.notification_channel_id), "Screen Filter",
-        NotificationManager.IMPORTANCE_LOW
-      )
-    )
   }
 
   /**
